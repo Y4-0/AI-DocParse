@@ -8,11 +8,17 @@ from openai import OpenAI
 from dotenv import load_dotenv
 from pathlib import Path
 
+# Load environment variables from pass.env (if available)
+try:
+    load_dotenv(dotenv_path="pass.env")
+except ImportError:
+    print("Warning: dotenv package not found. Environment variables must be set in shell.")
+
 #choose what to use, either openai or ollama
 USE_OLLAMA = True
 if USE_OLLAMA:
     client = OpenAI(
-        base_url="http://localhost:11434/v1",
+        base_url="http://localhost:11434/v1", #CHANGE URL IF NOT USING LOCAL HOST
         api_key="ollama"
     )
     model = "qwen2.5vl:7b"
@@ -22,12 +28,6 @@ else:
     model = "gpt-4o-mini"
     if not KEY:
         raise ValueError("OPENAI_API_KEY not found in environment variables. Please check pass.env")
-
-# Load environment variables from pass.env (if available)
-try:
-    load_dotenv(dotenv_path="pass.env")
-except ImportError:
-    print("Warning: dotenv package not found. Environment variables must be set in shell.")
 
 project_folder = Path(__file__).parent
 supported_files = [".pdf", ".png", ".jpg", ".jpeg"]
@@ -62,10 +62,6 @@ def encode_image_base64(image_bytes: bytes) -> str:
     return base64.b64encode(image_bytes).decode("utf-8")
 
 def extract_info_from_images(image_bytes_list: List[bytes]) -> str:
-    client = OpenAI(
-    base_url="http://localhost:11434/v1",
-    api_key="ollama"
-    )
     """Send document images to OpenAI to extract structured JSON data."""
     
     content: List[dict] = [
@@ -91,7 +87,7 @@ def extract_info_from_images(image_bytes_list: List[bytes]) -> str:
         })
         
     response = client.chat.completions.create(
-        model="qwen2.5vl:7b",
+        model=model,
         messages=[
             {
                 "role": "system",
@@ -127,7 +123,7 @@ def main():
     if not image_bytes_list:
         raise ValueError("No pages/images extracted from the file.")
         
-    print(f"Extracted {len(image_bytes_list)} page(s). Sending to OpenAI for analysis...")
+    print(f"Extracted {len(image_bytes_list)} page(s). Sending to {model} for analysis...")
     
     try:
         json_result = extract_info_from_images(image_bytes_list)
@@ -140,12 +136,12 @@ def main():
             json_result = json_result.strip()
         
     except openai.RateLimitError as e:
-        print(f"\n[ERROR] OpenAI Rate Limit / Quota Exceeded:")
+        print(f"\n[ERROR] {model} Rate Limit / Quota Exceeded:")
         print(f"Details: {e.message}")
-        print("\nPlease check your OpenAI billing plan and ensure you have active credits at https://platform.openai.com/api-keys")
+        print(f"\nPlease check your {model} billing plan and ensure you have active credits at https://platform.openai.com/api-keys")
         return
     except Exception as e:
-        print(f"\n[ERROR] Failed to extract information via OpenAI: {e}")
+        print(f"\n[ERROR] Failed to extract information via {model}: {e}")
         return
     
     # Parse the returned string into a JSON object to pretty-print
@@ -161,7 +157,7 @@ def main():
         print(json.dumps(data, indent=4, ensure_ascii=False))
         print(f"\nResults saved to: {output_file}")
     except json.JSONDecodeError:
-        print("Failed to decode JSON from OpenAI response:")
+        print(f"Failed to decode JSON from {model} response:")
         print(json_result)
 
 if __name__ == "__main__":

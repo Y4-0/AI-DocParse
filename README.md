@@ -1,7 +1,10 @@
 # AI-DocParse
 
 AI-powered document parser that converts PDFs and images into structured JSON using Vision Language Models.
-USES OLLAMA Qwen2.5-VL OR GPT4o-mini WHICH CAN BE SWITCHED IN 12TH LINE OF main.py. NOTE THAT USING AI USING PARSE DOCUMENT COULD BE INACCURATE AT TIMES AND ITS RECOMENDED TO RECHECK THE OUTPUT
+
+#To be noted
+
+Capable of using ollama Qwen2.5-VL or GPT-4o-mini which can be changed in line 12 of "main.py", ollama Qweb2.5-VL is set to local host i.e runs on model installed locally and would require you to change the url if you plan on not running it locally. NOTE THAT USING AI USING PARSE DOCUMENT COULD BE INACCURATE AT TIMES AND ITS RECOMENDED TO RECHECK THE OUTPUT. Results with GPT and could fail to load.
 
 ## Features
 
