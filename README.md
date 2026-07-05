@@ -31,14 +31,16 @@ Capable of using ollama Qwen2.5-VL or GPT-4o-mini which can be changed in line 1
     "line_items": [...]
 }
 
+## HOW TO USE
+
+Install the dependencies requirements via the installation process.
+Insert the pdf into the parent forlder along with the main.py file.
+execute/run 'main.py'.
+The output will be generated and placed right beside the pdf placed orginally.
+
 ## Installation
 
 pip install -r requirements.txt
-
-## HOW TO USE
-
-Insert the pdf into the parent forlder along with the main.py file and execute/run main.py
-The output will be generated and placed right beside the pdf placed orginally.
 
 ## Run
 
